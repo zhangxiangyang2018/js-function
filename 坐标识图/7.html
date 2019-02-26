@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>绘制坐标轴</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .y {
+            display: none;
+        }
+
+        .x {
+            display: none;
+        }
+
+        #cross {
+
+            position: absolute;
+            z-index: 20;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="./shizi.png" alt="" id="cross">
+    <img  alt="" style="width:1500px;display:block;z-index:0" id="img1">
+    <div class="view">
+        <!-- y轴坐标 -->
+        <div class="y"></div>
+        <!-- x 轴坐标 -->
+        <div class="x"></div>
+    </div>
+    <button id="drawY">绘制Y轴</button>
+    <button id="drawX">绘制X轴</button>
+    <button id="locationlBtn"> 打点定位</button>
+    <button id="clearLocation">清空辅助线</button>
+    <script src="./jquery.js"></script>
+    <script>
+        var viewHeight;
+        var viewWidth;
+        //   y轴  是否可以操作
+        var showY = false;
+        //  X  轴 是否可以操作
+        var showX = false;
+        //  打点定位
+        var isLocation = false;
+        // x 轴坐标
+        var x;
+
+        //   y轴坐标
+        var y;
+        $(function () {
+            var imgPath = "./2.jpg"
+            getImgPath(imgPath)
+            //设置可是操作区域内的宽跟高
+           
+            //加载view 区域touch 事件
+            load()
+        })
+
+        function getImgPath(path){
+            $("#img1").attr("src",path)
+           setTimeout(function(){
+            viewHeight = $("#img1").height()
+            viewWidth = $("#img1").width()
+            $(".view").css({
+                "position": "absolute",
+                "top": 0,
+                "width": viewWidth,
+                "height": viewHeight,
+                "z-index": 10
+            })
+           },1000)
+           
+        }
+        // 绘制y轴  初始位置
+        function drawYLine() {
+            showY = true;
+            showX = false;
+            isLocation = false
+        }
+        //  绘制X轴显示初始位置 
+
+
+        function drawXLine() {
+            showY = false;
+            showX = true;
+            isLocation = false;
+        }
+
+        // 打点定位
+        function drawPosition() {
+            showY = false;
+            showX = false;
+            isLocation = true;
+        }
+
+        // 清空辅助线
+        function clearLine(){
+            showY = false;
+            showX = false;
+            isLocation = false;
+            $(".y").hide()
+            $(".x").hide()
+            $("#cross").hide();
+        }
+
+         // 获取坐标
+         function  getPosition(){
+             console.log(x,y)
+         }
+        $("#drawY").click(function () {
+            drawYLine()
+        })
+
+
+        $("#drawX").click(function () {
+            drawXLine()
+
+        })
+
+
+        $("#locationlBtn").click(function () {
+            drawPosition()
+
+        })
+
+        // 清空辅助线
+        $("#clearLocation").click(function () {
+            clearLine()
+        })
+
+        function load() {
+
+            $(".view")[0].addEventListener('touchstart', touch, false);
+            $(".view")[0].addEventListener('touchmove', touch, false);
+            $(".view")[0].addEventListener('touchend', touch, false);
+
+            function touch(event) {
+                var event = event || window.event;
+                var flag = true;
+
+                switch (event.type) {
+
+                    case "touchstart":
+                        flag = true
+                        if (flag) {
+                            // 单指操作并且时间小于500毫秒
+                            if (event.touches.length == 1) {
+                                var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+                                var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+                                x = event.touches[0].clientX + scrollX;
+                                y = event.touches[0].clientY + scrollY
+
+                                //  如果是Y轴
+                                if (showY) {
+                                    $(".y").show().css({
+                                        "position": "absolute",
+                                        "top": 0,
+                                        "left": x,
+                                        "width": 1,
+                                        "height": viewHeight,
+                                        "z-index": 10,
+                                        "border-left": "1px solid blue"
+                                    })
+
+                                }
+
+                                // 如果是x轴
+
+                                if (showX) {
+                                    $(".x").show().css({
+                                        "position": "absolute",
+                                        "top": y,
+                                        "left": 0,
+                                        "width": viewWidth,
+                                        "height": 1,
+                                        "z-index": 10,
+                                        "border-top": "1px solid blue"
+                                    })
+
+                                }
+
+                                // 如果是打点定位 
+                                if (isLocation) {
+                                    $("#cross").css({
+                                        left: x - 15,
+                                        top: y - 15
+                                    }).show()
+                                    getPosition()
+                                }
+                            } else {
+                                //双指操作
+
+
+
+                            }
+
+
+
+                        }
+                        break;
+                    case "touchend":
+                        flag = false
+                        break;
+                    case "touchmove":
+
+                        flag = false
+                        break;
+                }
+
+            }
+        }
+    </script>
+</body>
+
+</html>

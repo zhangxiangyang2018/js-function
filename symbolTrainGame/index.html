@@ -1,0 +1,50 @@
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>弹幕小游戏</title>
+    
+    <link href="css/sweetalert.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+
+    <!-- 正确和错误的音频 -->
+    <audio src="./music/ok.wav" controls="controls" preload id="ok" hidden></audio>
+    <audio src="./music/error.mp3" controls="controls" preload id="error" hidden></audio>
+
+    <!-- 头部 -->
+    <div class="header">
+        <span id="title">
+            军队识图小游戏
+        </span>
+        <div id="scoreShow">
+            <span class="ok">
+                答对<span id="right">0</span>题,
+            </span>
+            <span class="wrong">
+                答错<span id="errors">0</span>题
+            </span>
+        </div>
+    </div>
+
+    <!-- 弹幕容器-->
+    <div class="container"></div>
+    <!-- 问题容器 -->
+    <div class="main">
+
+    </div>
+     <!-- 底下的按钮 -->
+    <div class="opts">
+        <button class="btn">开始游戏</button>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/index.js"></script>
+</body>
+
+</html>

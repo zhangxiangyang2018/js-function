@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- 移动端禁止用户缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no"/>
+     <!-- 下面为非禁止用户缩放 -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>点击获取坐标</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+
+            font-size: 14px;
+        }
+
+        #cross {
+
+            position: absolute;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+     
+    <img src="./shizi.png" alt="" id="cross">
+  
+  
+        <img  alt="" style="width:1500px;" id="imgs">
+  
+</body>
+<script src="./jquery.js"></script>
+<script>
+    // 点击位置的x 坐标
+    var x;
+    //点击位置的y坐标
+    var  y;
+    
+    // 获取图片地址方法
+    function getImgSrc(path){
+    　$("#imgs").attr("src",path)
+    }
+  
+   //获取当前位置
+   function getPosition(){
+      console.log(x,y)
+   }
+    function load() {
+        var imgPath = "./2.jpg"
+        getImgSrc(imgPath)
+         window.addEventListener('touchstart', touch, false);
+         window.addEventListener('touchmove', touch, false);
+         window.addEventListener('touchend', touch, false);
+
+        function touch(event) {
+            var event = event || window.event;
+
+            
+            var flag = true;
+            var startTime = new Date().getTime()
+            switch (event.type) {
+
+                case "touchstart":
+                    flag = true
+                    if (flag) {
+                        // 单指操作并且时间小于500毫秒
+                        if (event.touches.length == 1) {
+                            var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+                            var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+                      
+                              x = event.touches[0].clientX+ scrollX ;
+                             y = event.touches[0].clientY +scrollY;
+                            $("#cross").css({
+                                left: x - 15,
+                                top: y - 15
+                            }).show()
+                            getPosition()
+                        } else{
+                            // 多指头操作隐藏掉小图标 
+                            
+                            $("#cross").hide()
+                            // event.preventDefault()
+                        }//  多指操作
+
+
+
+
+                    }
+                    break;
+                case "touchend":
+                    flag = false
+                    break;
+                case "touchmove":
+
+                    flag = false
+                    break;
+            }
+
+        }
+    }
+    window.addEventListener('load', load, false);
+</script>
+
+</html>
+
+</html>

@@ -1,0 +1,134 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+/* 头部样式 */
+.header {
+
+    font-family: "Eina", "Helvetica Neue", Helvetica, sans-serif;
+    height: 50px;
+    line-height: 50px;
+    width: 100%;
+    box-shadow: 0 0 1px #ccc;
+    text-align: center;
+}
+.ok {
+    color: #67c23a;
+    font-family: "SimSun";
+    font-weight: bolder
+}
+
+.wrong {
+    color: red;
+    font-family: "SimSun";
+    font-weight: bolder
+}
+
+#scoreShow {
+    display: none;
+}
+
+.container {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+
+    overflow: hidden;
+}
+
+.main {
+    position: absolute;
+    width: 100%;
+    height: 30%;
+
+    overflow: hidden;
+
+    top: 60%;
+
+
+
+
+}
+
+/* 节点样式 */
+.node {
+
+    width: 50px;
+    height: 50px;
+    display: block;
+    line-height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    position: absolute;
+
+}
+
+.active {
+    border: 1.5px solid #67C23A !important;
+    transform: scale(1.1) !important;
+}
+
+/* 九宫格样式 */
+.grid {
+
+    width: 32.5%;
+    height: 30.5%;
+    background: #fff;
+    display: inline-block;
+    text-align: center;
+    position: relative;
+    font-size: 13px;
+    z-index: 0;
+    margin: 0.8% 0.4%;
+    background: linear-gradient(to right, #347eff, #1ea3ff);
+    border-radius: 10px;
+    color: #fff;
+    box-shadow: 0 0 3px #1ea3ff;
+
+
+
+}
+
+.grid span {
+    display: block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%)
+}
+
+
+
+.opts {
+    position: absolute;
+    width: 100%;
+    height: 8%;
+    bottom: 0;
+}
+
+.btn {
+    display: inline-block;
+    ;
+    white-space: nowrap;
+    cursor: pointer;
+    background: #347eff;
+    border: none;
+    outline: none;
+    color: #fff;
+    -webkit-appearance: none;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+    margin: 0;
+    transition: .1s;
+    font-weight: 500;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+}
+
+

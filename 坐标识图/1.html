@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" id="viewport" content="user-scalable=no,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0" />
+    <title>Robocat mobile Safari zoom fix</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        #container {
+            -webkit-transform-origin: 0px 0px;
+            -webkit-transform: scale3d(1,1,1);
+            /* shrink-to-fit needed so can measure width of container http://stackoverflow.com/questions/450903/make-css-div-width-equal-to-contents */
+            display: inline-block;
+            *display: inline;
+            *zoom: 1;
+        }
+        #zoomfix {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <input id="zoomfix" disabled="1" tabIndex="-1">
+    <div id="container">
+        <style>
+            table {
+                counter-reset: row cell;
+                background-image: url(http://upload.wikimedia.org/wikipedia/commons/3/38/JPEG_example_JPG_RIP_010.jpg);
+            }
+            tr {
+                counter-increment: row;
+            }
+            td:before {
+                counter-increment: cell;
+                color: white;
+                font-weight: bold;
+                content: "row" counter(row) ".cell" counter(cell);
+            }
+        </style>
+        <table cellspacing="10">
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+            <tr><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>
+        </table>
+    </div>
+
+    <script>
+    (function() {
+        var viewportScale = 1;
+        var container = document.getElementById('container');
+        var scale, originX, originY, relativeOriginX, relativeOriginY, windowW, windowH, containerW, containerH, resizeTimer, activeElement;
+        document.addEventListener('gesturestart', function(event) {
+            scale = null;
+            originX = event.pageX;
+            originY = event.pageY;
+            relativeOriginX = (originX - window.pageXOffset) / window.innerWidth;
+            relativeOriginY = (originY - window.pageYOffset) / window.innerHeight;
+            windowW = window.innerWidth;
+            windowH = window.innerHeight;
+            containerW = container.offsetWidth;
+            containerH = container.offsetHeight;
+        });
+        document.addEventListener('gesturechange', function(event) {
+            event.preventDefault();
+            if (originX && originY && event.scale && event.pageX && event.pageY) {
+                scale = event.scale;
+                var newWindowW = windowW / scale;
+                if (newWindowW > containerW) {
+                    scale = windowW / containerW;
+                }
+                var newWindowH = windowH / scale;
+                if (newWindowH > containerH) {
+                    scale = windowH / containerH;
+                }
+                if (viewportScale * scale < 0.1) {
+                    scale = 0.1/viewportScale;
+                }
+                if (viewportScale * scale > 10) {
+                    scale = 10/viewportScale;
+                }
+                container.style.WebkitTransformOrigin = originX + 'px ' + originY + 'px';
+                container.style.WebkitTransform = 'scale3d(' + scale + ',' + scale + ',1)';
+            }
+        });
+        document.addEventListener('gestureend', function() {
+            if (scale && (scale < 0.95 || scale > 1.05)) {
+                viewportScale *= scale;
+                scale = null;
+                container.style.WebkitTransform = '';
+                container.style.WebkitTransformOrigin = '';
+                document.getElementById('viewport').setAttribute('content', 'user-scalable=no,initial-scale=' + viewportScale + ',minimum-scale=' + viewportScale + ',maximum-scale=' + viewportScale);
+                document.body.style.WebkitTransform = 'scale3d(1,1,1)';
+                // Without zoomfix focus, after changing orientation and zoom a few times, the iOS viewport scale functionality sometimes locks up (and completely stops working).
+                // The reason I thought this hack would work is because showing the keyboard is the only way to affect the viewport sizing, which forces the viewport to resize (even though the keyboard doesn't actually get time to open!).
+                // Also discovered another amazing side effect: if you have no meta viewport element, and focus()/blur() in gestureend, zoom is disabled!! Wow!
+                var zoomfix = document.getElementById('zoomfix');
+                zoomfix.disabled = false;
+                zoomfix.focus();
+                zoomfix.blur();
+                setTimeout(function() {
+                    zoomfix.disabled = true;
+                    window.scrollTo(originX - relativeOriginX * window.innerWidth, originY - relativeOriginY * window.innerHeight);
+                    // This forces a repaint. repaint *intermittently* fails to redraw correctly, and this fixes the problem.
+                    document.body.style.WebkitTransform = '';
+                }, 0);
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

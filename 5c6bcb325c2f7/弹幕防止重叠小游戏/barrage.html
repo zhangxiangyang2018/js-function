@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>弹幕</title>
+  <link rel="stylesheet" href="wall.css" />
+  <link rel="stylesheet" href="./css/sweetalert.min.css">
+</head>
+
+<body>
+  <audio src="./music/ok.wav" controls="controls" preload id="ok" meted="meted" autoPlay="autoPlay" hidden></audio>
+  <audio src="./music/error.mp3" controls="controls" preload id="error" meted="meted" autoPlay="autoPlay" hidden></audio>
+  <!-- 答案容器 -->
+  <div id="container" class="container"></div>
+
+  <!-- 问题容器 -->
+  <div class="main">
+
+  </div>
+  <!-- 底下的按钮 -->
+  <div class="opts">
+    <button class="btn">开始游戏</button>
+  </div>
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script src="js/sweetalert.min.js"></script>
+
+  <script>
+    /* 自定义弹框显示*/
+    /*
+        @params
+         msg:消息提示
+         duration:时长
+         type:类型 1.sucess代表成功 eroor 代表失败 default 代表默认
+      */
+    function Toast(msg, duration, type) {
+      duration = isNaN(duration) ? 3000 : duration;
+      var m = document.createElement("div");
+      m.innerHTML = msg;
+      if (type == "error") {
+        m.style.cssText =
+          `width: 60%;min-width: 150px;opacity: 0.7;height: 30px;color: rgb(255, 255, 255);line-height: 30px;text-align: center;border-radius: 5px;
+            position: fixed;top: 10%;left: 20%;z-index: 999999;background: red;font-size: 12px;`;
+      }
+      if (type == "sucess") {
+        m.style.cssText =
+          `width: 60%;min-width: 150px;opacity: 0.7;height: 30px;color:rgb(255, 255, 255);line-height: 30px;text-align: center;border-radius:
+             5px;position: fixed;top: 10%;left: 20%;z-index: 999999;background: green;font-size: 12px;`;
+      }
+      if (type == "default") {
+        m.style.cssText =
+          `width: 60%;min-width: 150px;opacity: 0.7;height: 30px;color:rgb(255, 255, 255);line-height: 30px;
+                text-align: center;border-radius: 5px;position: fixed;top: 10%;left: 20%;z-index: 999999;background: #666;font-size: 12px;`;
+      }
+      document.body.appendChild(m);
+      setTimeout(function () {
+        var d = 0.5;
+        m.style.webkitTransition =
+          "-webkit-transform " + d + "s ease-in, opacity " + d + "s ease-in";
+        m.style.opacity = "0";
+
+        setTimeout(function () {
+          document.body.removeChild(m);
+        }, d * 1000);
+      }, duration);
+    }
+
+    var questions = [{
+        id: 0,
+        text: "问题1=?"
+      },
+      {
+        id: 1,
+        text: "问题2=?"
+      },
+      {
+        id: 2,
+        text: "问题3=?"
+      },
+      {
+        id: 3,
+        text: "问题4=?"
+      },
+      {
+        id: 4,
+        text: "问题5=?"
+      },
+      {
+        id: 5,
+        text: "问题6=?"
+      },
+      {
+        id: 6,
+        text: "问题7=?"
+      },
+      {
+        id: 7,
+        text: "问题8=?"
+      },
+      {
+        id: 8,
+        text: "问题9=?"
+      },
+      {
+        id: 9,
+        text: "问题10=?"
+      }
+    ];
+    // // 答案存储结构
+    var answers = [{
+        id: 0,
+        path: "./img/1.png"
+      },
+      {
+        id: 1,
+        path: "./img/2.png"
+      },
+      {
+        id: 2,
+        path: "./img/3.gif"
+      },
+      {
+        id: 3,
+        path: "./img/4.png"
+      },
+      {
+        id: 4,
+        path: "./img/5.png"
+      },
+      {
+        id: 5,
+        path: "./img/6.gif"
+      },
+      {
+        id: 6,
+        path: "./img/7.png"
+      }
+    ]
+    // 初始化每次获取第几张图片
+    var i = 0;
+    // 定时器初始化
+    var timer = null;
+    // 当前点击的图片答案id
+    var imgId = null;
+    //当前对的题数
+    var rightNum = 0;
+    // 生成错题
+    var wrongNum = 0;
+    //是否开始游戏
+    var isStart = false;
+    //  问题id初始化参数
+    var questionId = null;
+    //  总共允许生成几个错题
+    var totalError = 10;
+    // 单个图片节点走完全程所需要的时长 单位毫秒级别
+  </script>
+
+  <script type="text/javascript">
+    function startGame() {
+
+      var option = {
+        container: "#container", //弹幕墙的id
+        barrageLen: 5 //弹幕的行数
+      }
+      barrageWall.init(option); //初始化弹幕墙
+      var len = answers.length;
+
+      clearInterval(timer);
+      timer = setInterval(function () {
+
+        if (i < len) {
+          barrageWall.upWall(answers[i].path, answers[i].id); //初始化弹幕墙
+          i++;
+
+        } else {
+          i=0
+          barrageWall.upWall(answers[i].path, answers[i].id); //初始化弹幕墙
+          i++;
+        }
+      }, 1000)
+      barrageWall.question(questions)
+    }
+  </script>
+  <script type="text/javascript" src="js/barrageWall.js"></script>
+  <script>
+    // 游戏启动按钮逻辑
+    $(".btn").click(function () {
+
+
+      isStart = !isStart
+      if (isStart) {
+        $(this).text("结束游戏")
+        $(this).css("background", "red")
+        //开始游戏
+        startGame()
+      } else {
+        var str = "答对" + rightNum + "道题目！" + "答错" + wrongNum + "道题目！"
+        swal({
+          title: '考试结果',
+          text: str,
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }, function (isConfirm) {
+
+          if (isConfirm) {
+
+            window.location.reload()
+          } else {
+            isStart = true;
+          }
+        });
+      }
+
+
+    })
+  </script>
+
+</body>
+
+</html>

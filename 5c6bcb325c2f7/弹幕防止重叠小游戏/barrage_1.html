@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>最终版本</title>
+    <link rel="stylesheet" href="wall.css" />
+    <link rel="stylesheet" href="./css/sweetalert.min.css">
+</head>
+
+<body>
+    <audio src="./music/ok.wav" controls="controls" preload id="ok" meted="meted" autoPlay="autoPlay" hidden></audio>
+    <audio src="./music/error.mp3" controls="controls" preload id="error" meted="meted" autoPlay="autoPlay" hidden></audio>
+    <!-- 头部 -->
+    <div id="header">
+
+        <div>
+            <span class="ok"> 答对<span id="right">0</span>题, </span>
+            <span class="wrong"> 答错<span id="errors">0</span>题 </span>
+        </div>
+    </div>
+    <!-- 答案容器 -->
+    <div id="container" class="container"></div>
+
+    <!-- 问题容器 -->
+    <div class="main">
+
+    </div>
+    <!-- 底下的按钮 -->
+    <div class="opts">
+        <button class="btn">开始游戏</button>
+    </div>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script>
+        // 初始化所有变量
+        // 初始化每次获取第几张图片
+        var i = 0;
+        // 定时器初始化
+        var timer = null;
+        // 当前点击的图片答案id
+        var imgId = null;
+        //当前对的题数
+        var rightNum = 0;
+        // 生成错题
+        var wrongNum = 0;
+        //是否开始游戏
+        var isStart = false;
+        //  问题id初始化参数
+        var questionId = null;
+        //  总共允许生成几个错题
+        var totalError = 10;
+        //当前状态是否为错误状
+        // 观察器
+        var wacther = null;
+        //是否停止
+        var isStop = false;
+        //  问题存储结构
+
+        var questions=[]
+
+        
+        var questions = [{
+                id: 0,
+                text: "问题1=?"
+            },
+            {
+                id: 1,
+                text: "问题2=?"
+            },
+            {
+                id: 2,
+                text: "问题3=?"
+            },
+            {
+                id: 3,
+                text: "问题4=?"
+            },
+            {
+                id: 4,
+                text: "问题5=?"
+            },
+            {
+                id: 5,
+                text: "问题6=?"
+            },
+            {
+                id: 6,
+                text: "问题7=?"
+            },
+            {
+                id: 7,
+                text: "问题8=?"
+            },
+            {
+                id: 8,
+                text: "问题9=?"
+            },
+            {
+                id: 9,
+                text: "问题10=?"
+            }
+         ];
+        var answers=[]
+        // // 答案存储结构
+        var answers = [{
+                id: 0,
+                path: "./img/1.png"
+            },
+            {
+                id: 1,
+                path: "./img/2.png"
+            },
+            {
+                id: 2,
+                path: "./img/3.gif"
+            },
+            {
+                id: 3,
+                path: "./img/4.png"
+            },
+            {
+                id: 4,
+                path: "./img/5.png"
+            },
+            {
+                id: 5,
+                path: "./img/6.gif"
+            },
+            {
+                id: 6,
+                path: "./img/7.png"
+            }
+        ]
+    </script>
+    <script>
+        /* 自定义弹框显示*/
+        /*
+            @params
+             msg:消息提示
+             duration:时长
+             type:类型 1.sucess代表成功 eroor 代表失败 default 代表默认
+          */
+        function Toast(msg, duration, type) {
+            duration = isNaN(duration) ? 3000 : duration;
+            var m = document.createElement("div");
+            m.innerHTML = msg;
+            if (type == "error") {
+                m.style.cssText =
+                    `width: 60%;min-width: 150px;opacity: 0.7;height: 30px;color: rgb(255, 255, 255);line-height: 30px;text-align: center;border-radius: 5px;
+            position: fixed;top: 10%;left: 20%;z-index: 999999;background: red;font-size: 12px;`;
+            }
+            if (type == "sucess") {
+                m.style.cssText =
+                    `width: 60%;min-width: 150px;opacity: 0.7;height: 30px;color:rgb(255, 255, 255);line-height: 30px;text-align: center;border-radius:
+             5px;position: fixed;top: 10%;left: 20%;z-index: 999999;background: green;font-size: 12px;`;
+            }
+            if (type == "default") {
+                m.style.cssText =
+                    `width: 60%;min-width: 150px;opacity: 0.7;height: 30px;color:rgb(255, 255, 255);line-height: 30px;
+                text-align: center;border-radius: 5px;position: fixed;top: 10%;left: 20%;z-index: 999999;background: #666;font-size: 12px;`;
+            }
+            document.body.appendChild(m);
+            setTimeout(function () {
+                var d = 0.5;
+                m.style.webkitTransition =
+                    "-webkit-transform " + d + "s ease-in, opacity " + d + "s ease-in";
+                m.style.opacity = "0";
+
+                setTimeout(function () {
+                    document.body.removeChild(m);
+                }, d * 1000);
+            }, duration);
+        }
+
+        //  实时监测 错题逻辑 函数
+
+        function watch() {
+            clearInterval(wacther)
+            // 监测错题生成数量是否已经超过限制数量
+
+            wacther = setInterval(function () {
+                if (wrongNum >= totalError) {
+                    var limit = "限制" + totalError + "道错题";
+                    swal({
+                            title: "考试结束！",
+                            text: limit,
+                            type: "warning",
+                            timer: 1000,
+                            showConfirmButton: false
+                        },
+                        function () {
+                            window.location.reload();
+                        }
+                    );
+                }
+            }, 500)
+        }
+
+        //开始游戏
+        function startGame() {
+            // 启动观察器观察错题是否超过限制
+            // watch()
+            $("#header").show()
+            var option = {
+                container: "#container", //弹幕墙的id
+                barrageLen: 5 //弹幕的行数
+            }
+            barrageWall.init(option); //初始化弹幕墙
+            var len = answers.length;
+            clearInterval(timer);
+            timer = setInterval(function () {
+                if (i < len) {
+                    barrageWall.upWall(answers[i].path, answers[i].id); //初始化弹幕墙
+                    i++
+                } else {
+                    //i=0
+                 clearInterval(timer);
+                }
+            }, 1000)
+            //生成问题
+            barrageWall.question(questions)
+        }
+        // 是否结束游戏
+        function endSure() {
+            // 清空容器解决容器二次位移出现变量获取不到的问题 
+            $(".container img").each(function (index, elem) {
+                let id = $(elem).attr("id")
+                $(".main div").each(function (index1, elem1) {
+                    var id1 = $(elem1).attr("id")
+                    if (id == id1) {
+                        $(elem).remove();
+                        $(elem1).remove();
+                    }
+                })
+            })
+        }
+        //  主题弹幕矩阵弹幕动画函数--防止重叠
+        var barrageWall = {
+            isStop: false, // 是否停止当前动画
+            container: null, //容器选择器
+            barrageLen: null, //弹幕的条数
+            lastElem: 0, //弹幕出现的位置
+            overlapElem: -1, //如果大于0则表示每条弹幕轨道上都有弹幕未全部出现，需要重叠定位在弹幕轨道上
+            barrage: [], //弹幕墙
+            barrageOffset: [], //弹幕墙上最后一条弹幕的偏移量
+            init: function (option) {
+                if (option.container === undefined) {
+                    console.error("必须指定 container 属性，container为弹幕容器的选择器");
+                    return false;
+                }
+                if (option.barrageLen === undefined) {
+                    console.error("必须指定 barrageLen 属性，barrageLen为弹幕轨道的数");
+                    return false;
+                }
+                this.container = option.container;
+                this.barrageLen = option.barrageLen;
+                for (var i = 0; i < this.barrageLen; i++) { //建立弹幕墙，此处的循环次数为当前页面运行的弹幕行数
+                    this.barrage[i] = new Array();
+                }
+            },
+            upWall: function (path, id) { //弹幕上墙
+                if (!this.barrageLen && this.container) {
+                    console.error("未检测到container和barrageLen属性，请先初始化弹幕墙并指定container和barrageLen属性");
+                    return false;
+                }
+                var that = this;
+                var containerWidth = $(".container").width();
+                //从上至下找出每条弹幕轨道上最后一条弹幕移动的位置
+                this.positionWall();
+                var elem = $('<img/>') //创建元素
+                    .addClass('list') //添加样式
+                    .css({
+                        "top": this.lastElem * 55,
+                        "left": 0
+                    }) //定位
+                    .attr({
+                        "src": path,
+                        "id": id,
+                        "isFlag": false
+                    })
+
+                    .appendTo(this.container); //追加在父元素后面
+                // 节点点击事件
+                elem.click(function () {
+                    imgId = elem.attr("id");
+                    //重置问题id
+                    questionId = null
+                    // 重新置空错误标识 
+
+                    $(".container img").attr("isFlag", false)
+                    elem.addClass("active").siblings().removeClass("active");
+                });
+                //追加在数组中
+                this.barrage[this.lastElem].push(elem);
+                //200ms防止元素动画不执行
+                setTimeout(function () {
+                    var left = "translateX(" + containerWidth + "px)"
+                    elem.css("transform", left);
+                }, 200);
+
+                //10s后动画执行完毕，从数组和页面中移除
+                setTimeout(function () {
+
+                    //删除通道二维数组的元素
+                    for (var i = 0; i < this.barrage.length; i++) {
+                        for (var x = 0; x < this.barrage[i].length; x++) {
+                            if (this.barrage[i][x] === elem) {
+                                wrong()
+                                break;
+                            }
+                        }
+                    }
+                    // 错题删除逻辑
+                    function wrong() {
+                        if (elem.hasClass("active")) {
+                            imgId = null
+                            questionId = null
+
+                        }
+                        if (isStop == false) {
+
+                            if (elem.attr("isflag") == "false") {
+                                Toast('回答错误', 1000, "error")
+                                wrongNum++
+                                that.playMusic("error")
+                                $("#errors").text(wrongNum)
+                            }
+                        }
+                    }
+                    //页面删除元素 
+                    elem.remove();
+
+                    //删除对应的问题按钮
+                    $(".main .grid").each(function () {
+                        if ($(this).attr("id") == elem.attr("id")) {
+                            $(this).remove();
+                        }
+                    });
+                    // 判断当前删除元素是否为选中状态 如果为选中状态则在删除的时候将 imgId, questionId 置为初始值
+
+                }.bind(this), 10000);
+
+
+            },
+            positionWall: function () {
+                for (var i = 0; i <= this.barrage.length; i++) { //从上至下找出每条弹幕轨道上最后一条弹幕移动的位置
+                    if (i === this.barrage.length) { //每条弹幕轨道上都有弹幕未全部出现的情况
+                        this.minOffset(); //弹幕墙上所有的位置都有弹幕且都未出现完毕时，找出他们当中完全最先的那个
+                    } else { //若有某个最后一条弹幕已经全部出现
+                        if (this.afterOffset(i)) break; //找到弹幕出现的位置，找到则退出循环
+                    }
+                }
+            },
+            minOffset: function () { //找出所有弹幕轨道上最后一个弹幕中最先出现的那个（偏移量减去自身宽度）
+                var minOffset = 0;
+                for (var x = 0; x < this.barrage.length; x++) {
+                    var elem = this.barrage[x][this.barrage[x].length - 1]; //获取当前弹幕轨道上最后一条弹幕
+                    var aboveWidth = elem.width(); //获取它的宽度
+                    var matrix = elem.css('transform'); //获取它的矩阵值
+                    this.barrageOffset[x] = matrix === "none" ? aboveWidth : parseInt(matrix.split(",")[4]) +
+                        aboveWidth; //matrix为none则弹幕translateX为0
+                    minOffset = this.barrageOffset[x] > this.barrageOffset[minOffset] ? x : minOffset; //找到最先出现的弹幕
+                }
+                this.lastElem = minOffset;
+            },
+            afterOffset: function (i) { //找到弹幕出现的位置
+                if (this.barrage[i].length === 0) { //为true则表示当前弹幕轨道没有弹幕，则当前弹幕放在改轨道上
+                    this.lastElem = i;
+                    this.overlapElem = -1;
+                    return true;
+                } else { //当前弹幕轨道上有弹幕
+                    var elem = this.barrage[i][this.barrage[i].length - 1]; //获取当前弹幕轨道上最后一条弹幕
+                    var aboveWidth = elem.width(); //获取它的宽度
+                    var matrix = elem.css('transform'); //获取它的矩阵值
+                    if (matrix !== "none") {
+                        var aboveTransform = parseInt(matrix.split(",")[4]); //取出最后一条弹幕的矩阵值中X轴的偏移量，即translateX
+                        if (-aboveTransform - aboveWidth > 50) { //50为间隔 为true则表示当前弹幕轨道上最后一条弹幕已经全部出现，则当前弹幕放在改轨道上
+                            this.lastElem = i;
+                            this.overlapElem = -1;
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
+            // 底下问题点击事件
+            question: function (questions) {
+                var that = this;
+                if (Array.isArray(questions) && questions.length > 0) {
+                    questions.forEach(function (val, index) {
+                        var div = $(
+                            "<div class='grid'><span>" + val.text + "</span></div>"
+                        );
+                        div.attr({
+                            id: val.id
+                        });
+                        $(".main").append(div);
+                    });
+                    $(".main div").click(function () {
+                        //判断允许生成的错题在总的限制范围内
+                        if (wrongNum < totalError) {
+                            questionId = $(this).attr("id");
+                            if (imgId) {
+                                if (questionId == imgId) {
+                                    // 移除问题节点从DOM 中删除
+                                    $(this).remove();
+                                    //  删除弹幕图片对应的DoM节点
+                                    $(".container img").each(function (index, elem) {
+                                        if ($(elem).attr("id") == questionId) {
+                                            $(elem).remove()
+                                        }
+                                    })
+
+                                    //重新置空答案和问题的内存中保存项
+                                    imgId = null
+                                    questionId = null
+                                    Toast('回答正确', 1000, "sucess")
+                                    rightNum++
+                                    $("#right").text(rightNum)
+                                    that.playMusic("ok")
+                                    // 删除二维矩阵队列的回答正确元素
+                                    for (let i = 0; i < that.barrage.length; i++) {
+                                        for (let x = 0; x < that.barrage[i].length; x++) {
+
+                                            if (that.barrage[i][x].attr("id") == $(this).attr("id")) {
+                                                that.barrage[i].splice(x, 1);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Toast('回答错误', 1000, "error")
+                                    wrongNum++
+                                    that.playMusic("error")
+                                    $("#errors").text(wrongNum)
+                                    //将回答错误的isflag 为true
+                                    $(".container img").each(function () {
+                                        if ($(this).attr("id") == imgId) {
+                                            $(this).attr("isflag", "true")
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    })
+                }
+            },
+            // 播放音乐
+            playMusic(element) {
+                var music = document.getElementById(element)
+                music.currentTime = 0; //重新播放
+                music.play();
+            }
+
+        }
+
+        //游戏启动按钮逻辑
+        $(".btn").click(function () {
+            isStart = !isStart
+            if (isStart) {
+                $(this).text("结束游戏")
+                $(this).css("background", "red")
+                //开始游戏
+                startGame()
+            } else {
+                isStop = true
+                endSure()
+                //  停止计时器
+                clearInterval(timer);
+                var str = "答对" + rightNum + "道题目！" + "答错" + wrongNum + "道题目！"
+                swal({
+                    title: '考试结果',
+                    text: str,
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }, function (isConfirm) {
+
+                    if (isConfirm) {
+                        window.location.reload()
+                    } else {
+                        isStop = false
+                        startGame()
+                        isStart = true;
+                    }
+                });
+            }
+
+
+        })
+
+
+
+        // 页面初始化加载逻辑
+        function getData(res) {
+          
+            if (typeof res == String || typeof res == "string") res = JSON.parse(res);
+            if (res.code == 1) {
+                answers = typeof res == String || typeof res == "string" ? JSON.parse(res.data.Answer) : res.data.Answer;
+                console.log(123)
+                questions = typeof res == String || typeof res == "string" ? JSON.parse(res.data.Question) : res.data.Question;
+                console.log(123456)
+                init()
+            } else {
+                Toast('数据获取失败!', 1000, "error")
+            }
+        }
+    </script>
+</body>
+
+</html>
