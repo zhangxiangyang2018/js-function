@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var data = [{
+                id: 1,
+                name: "办公管理",
+                pid: 0
+            },
+            {
+                id: 2,
+                name: "请假申请",
+                pid: 1
+            },
+            {
+                id: 3,
+                name: "出差申请",
+                pid: 1
+            },
+            {
+                id: 4,
+                name: "请假记录",
+                pid: 2
+            },
+            {
+                id: 5,
+                name: "系统设置",
+                pid: 0
+            },
+            {
+                id: 6,
+                name: "权限管理",
+                pid: 5
+            },
+            {
+                id: 7,
+                name: "用户角色",
+                pid: 6
+            },
+            {
+                id: 8,
+                name: "菜单设置",
+                pid: 6
+            },
+        ];
+
+        function sonsTree(obj, arr) {
+            var children = new Array();
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].pid == obj.id) { //pid等于加入数组
+                    sonsTree(arr[i], arr); //递归出子元素
+                    arr[i].children = [];
+                    children.push(arr[i]);
+                }
+            }
+            // 给构造的obj 添加children属性
+            if (children.length > 0) {
+                obj.children = children;
+            }
+            return obj;
+        }
+
+
+        function treeUtils() {
+            let ptree = [];
+            let tree = [];
+            for (var i = 0; i < data.length; i++) {
+            
+                    let o = sonsTree(data[i], data);
+                    ptree.push(o);
+                
+            }
+            console.info(ptree);
+            return ptree;
+        }
+        treeUtils()
+    </script>
+</body>
+
+</html>

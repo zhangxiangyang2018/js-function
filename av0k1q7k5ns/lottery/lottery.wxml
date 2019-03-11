@@ -1,0 +1,16 @@
+<view >
+  <view class='container'>
+    <image src='img/pan.png' style='transform:rotate({{rotate}}deg);-webkit-transform:rotate({{rotate}}deg);' class='img {{rotate_class}}' mode='aspectFit'/>
+    <image src='img/point.png' bindtouchstart='rotate' class='point' mode='aspectFit'/>
+    <text class='text'>点击抽奖</text>
+    
+  </view>
+</view>
+
+
+
+
+
+
+
+

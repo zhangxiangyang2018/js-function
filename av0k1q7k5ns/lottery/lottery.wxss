@@ -1,0 +1,34 @@
+.container{
+  position: relative;
+}
+.img{
+  width:90%;
+  height:90vw;
+  margin:5vw;
+  transform-origin: center;
+  -webkit-transform-origin: center;
+  transform:rotate(0deg);
+  -webkit-transform:rotate(0deg);
+}
+.point,.text{
+  position: absolute;
+  width:36vw;
+  height:36vw;
+  left:0px;
+  top:0px;
+  right:0px;
+  bottom:0px;
+  margin:auto;
+  transform:translate(0px,-3vw);
+  -webkit-transform:translate(0px,-3vw);
+}
+.text{
+  width:30vw;
+  height:20px;
+  line-height:20px;
+  text-align:center;
+  font-size:16px;
+  transform:translate(0px,0);
+  -webkit-transform:translate(0px,0);
+  pointer-events: none;
+}

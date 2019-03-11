@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href='css/bootstrap.min.css' type='text/css' rel='stylesheet' />
+    <link href='css/bootstrap-datetimepicker.min.css' type='text/css' rel='stylesheet' />
+</head>
+<style>
+    ul,
+		li {
+			list-style: none;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.day_track {
+			width: 100%;
+			background: #ccc;
+			height: 5px;
+		}
+
+		.day_track_ul li {
+			position: relative;
+		}
+
+		.day_track_dot {
+			position: absolute;
+			left: 10%;
+			width: 20%;
+			bottom: 0px;
+			height: 5px;
+			background: blue;
+		}
+
+		.day_track_dot:before,
+		.day_track_dot:after {
+			content: attr(begin);
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			background: blue;
+			position: absolute;
+			top: -3px;
+			left: -3px;
+			line-height: 50px;
+			text-indent: -.8em;
+			font-size: 10px;
+		}
+
+		.day_track_dot:after {
+			content: attr(end);
+			left: auto;
+			right: -3px;
+		}
+
+		.day_track_title {
+			line-height: 34px;
+			display: inline-block;
+			margin-bottom: 10px;
+		}
+
+		.day_track {
+			margin-bottom: 40px;
+		}
+	</style>
+
+<body>
+    <form class="form-horizontal add-leave-form">
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-3 control-label">周内上班时间</label>
+            <div class="col-sm-9">
+                <label class="control-label">上午:[09:00-12:00] &nbsp;&nbsp;下午:[13:30-18:30]</label>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-3 control-label">年假范围</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control begin_leave_time" name="begin_time" placeholder='请选择年假开始时间'>
+            </div>
+            <div class="col-sm-1" style='width:10px;padding-left:0px;padding-right:0px;line-height:34px;margin-left:-10px;'>至</div>
+            <div class="col-sm-2" style='margin-left:-5px;'>
+                <input type="text" class="form-control end_leave_time" name="end_time" placeholder='请选择年假结束时间'>
+            </div>
+            <div class="col-sm-1">
+                <button type='button' class="btn btn-primary cal_time">确定</button>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-3 control-label">请假总时间</label>
+            <div class="col-sm-9">
+                <label class="control-label all_leave_time"></label>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-3 control-label">请假明细</label>
+            <div class="col-sm-7">
+                <ul class="day_track_ul">
+
+                </ul>
+            </div>
+        </div>
+    </form>
+    <script src='js/jquery-3.1.1.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+    <script src='js/nb_tmpl.js'></script>
+    <script src='js/bootstrap-datetimepicker.min.js'></script>
+    <script src='js/bootstrap-datetimepicker.zh-CN.js'></script>
+    <script type='text/template' id='detail_tmpl'>
+        <%datas.forEach(function(data,i){%>
+			<li>
+				<span class="day_track_title"><%=data.time%>(<%=data.day_name%>)</span>
+				<div class='day_track'></div>
+				<%if(data.day!=0&&data.day!=6){%>
+				<%data.times.forEach(function(time,j){%>
+				<div class='day_track_dot' begin='<%=time.begin_show%>' end='<%=time.end_show%>' style="left:<%=time.left%>;width:<%=time.width%>;"></div>
+				<%});%>
+				<%}%>
+
+			</li>
+			<%});%>
+		</script>
+    <script>
+        //  测试
+        var timeDis = function (time1, time2) {
+
+            var timePart = [{ //时间段
+                begin: '09:00',
+                end: '12:00'
+            }, {
+                begin: '13:30',
+                end: '18:30'
+            }];
+
+            var t1 = +new Date(time1),
+                t2 = +new Date(time2);
+
+            var min_t = Math.min(t1, t2), //小的时间
+                max_t = Math.max(t1, t2), //大的时间
+                dis_t = (max_t - min_t) / 1000, //时间差
+                begin_day = new Date(min_t).getDay(), //开始的星期
+                day_t = 24 * 60 * 60; //一天的时间长
+
+            var parseTimePart = timePart.map(function (n, i) { //将时间转换成时间戳的形势
+                var o = {};
+                for (var key in n) {
+                    var v = n[key],
+                        t = (+v.split(':')[0]) * 60 * 60 + (+v.split(':')[1]) * 60;
+                    o[key] = t;
+                }
+                return o;
+            });
+            
+            var formatTime = function (time) {
+                var date = new Date(time),
+                    year = date.getFullYear(),
+                    month = date.getMonth() + 1,
+                    day = date.getDate();
+                return year + '-' + (month < 10 ? ('0' + month) : month) + '-' + (day < 10 ? ('0' + day) : day);
+            }
+
+            var min_t_s = new Date(min_t).getHours() * 3600 + new Date(min_t).getMinutes() * 60,
+                max_t_e = new Date(max_t).getHours() * 3600 + new Date(max_t).getMinutes() * 60;
+
+            var allSplitTime = []; //所有分割的时间段
+            if (max_t_e - min_t_s == dis_t) { //一天之内
+                allSplitTime.push({
+                    begin: min_t_s,
+                    end: max_t_e,
+                    day: begin_day
+                });
+            } else { //跨了一天
+                allSplitTime.push({ //第一个时间片段
+                    begin: min_t_s,
+                    end: day_t,
+                    day: begin_day
+                });
+
+                var fullDayLength = (dis_t - (max_t_e + (day_t - min_t_s))) / day_t; //计算中间有多少完整天
+
+                for (var i = 0; i < fullDayLength; i++) {
+                    begin_day++;
+                    begin_day = begin_day % 7;
+                    allSplitTime.push({ //中间的填充完整片段
+                        begin: 0,
+                        end: day_t,
+                        day: begin_day
+                    });
+                }
+
+                begin_day++;
+                begin_day = begin_day % 7;
+                allSplitTime.push({ //最后一个时间片段
+                    begin: 0,
+                    end: max_t_e,
+                    day: begin_day
+                });
+            }
+
+            //			console.log(allSplitTime);
+            var all_use_time = [],
+                all_use_time_value = 0;
+
+            allSplitTime.forEach(function (t_s, i) { //分割好的时间片段
+                var now_day = formatTime(min_t + i * 24 * 3600 * 1000); //每隔一天加24小时
+                if (t_s.day == 0 || t_s.day == 6) { //周六和周日
+                    all_use_time.push({
+                        day: t_s.day, //星期几
+                        time: now_day, //几月几号
+                    });
+                } else { //正常工作日
+                    var t_o = {
+                        day: t_s.day, //星期几
+                        time: now_day, //几月几号
+                        times: []
+                    }; //获取当天有效时间
+
+                    parseTimePart.forEach(function (t_p, j) { //可用区间
+                        var c_min_t = Math.max(t_s.begin, t_p.begin),
+                            c_max_t = Math.min(t_s.end, t_p.end);
+                        if (c_max_t > c_min_t) {
+                            t_o.times.push({
+                                begin: c_min_t,
+                                end: c_max_t
+                            })
+                            all_use_time_value += c_max_t - c_min_t;
+                        }
+                    });
+                    all_use_time.push(t_o);
+                }
+            });
+            //					console.log(all_use_time);
+            return {
+                hour: Math.floor(all_use_time_value / (60 * 60)),
+                minute: Math.floor(all_use_time_value % (60 * 60) / 60),
+                detail: all_use_time
+            }
+
+        }
+
+        $(".begin_leave_time").datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:00',
+            minuteStep: 1
+        });
+        $(".end_leave_time").datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:00',
+            minuteStep: 1
+        });
+        $('.cal_time').on('click', function () {
+            var begin_time = $('.begin_leave_time').val(),
+                end_time = $('.end_leave_time').val();
+            var data = timeDis(begin_time, end_time);
+            console.log(data);
+        })
+    </script>
+</body>
+
+</html>
